@@ -63,7 +63,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 ),
                 AnimatedTextKit(
                   animatedTexts: [
-                    TypewriterAnimatedText('Toxic 4EVER',
+                    TypewriterAnimatedText('Flash Chat',
                         textStyle: const TextStyle(
                           fontSize: 45.0,
                           fontWeight: FontWeight.w900,
