@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "357583750400",
+    "project_id": "toxic-4ever",
+    "storage_bucket": "toxic-4ever.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:357583750400:android:b0346e1c6180261803dfe5",
+        "android_client_info": {
+          "package_name": "com.toxicann.flash_chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "357583750400-c2hjma9g0fsarn5h0a8c5d8pv6tc3p1b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCV6dIjoUb0NUQlfp2XJxpuJ2c8DFH8vc0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "357583750400-c2hjma9g0fsarn5h0a8c5d8pv6tc3p1b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
