@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../constants.dart';
-import './chat_screen.dart';
 import '../components/buttons.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -18,6 +17,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   late String email;
   late String password;
   final _auth = FirebaseAuth.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
