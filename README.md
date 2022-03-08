@@ -4,4 +4,4 @@ Implementation of simple User Authentication and Authorization process from fire
 
 Register yourself as user and login to the application to chat.
 
-![chat app gif](https://user-images.githubusercontent.com/31942766/157203614-9f498024-d692-45fc-ad6f-28ed7c12f5da.gif)
+![chat-app](https://user-images.githubusercontent.com/31942766/157203995-e185eba5-5e8c-4d47-ba7a-7a149f888657.gif)
