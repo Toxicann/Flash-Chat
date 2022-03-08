@@ -5,6 +5,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flash_chat/constants.dart';
 
+final _fireStore = FirebaseFirestore.instance;
+final _auth = FirebaseAuth.instance;
+
 class ChatScreen extends StatefulWidget {
   static const String id = 'chat_screen';
 
@@ -14,8 +17,6 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  final _fireStore = FirebaseFirestore.instance;
-  final _auth = FirebaseAuth.instance;
   late User loggedInUser;
   late String messageText;
   final myKeyboardController = TextEditingController();
@@ -68,7 +69,7 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            MessageStream(fireStore: _fireStore),
+            MessageStream(currentUser: loggedInUser.email),
             Container(
               decoration: kMessageContainerDecoration,
               child: Row(
@@ -85,6 +86,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         _fireStore.collection('messages').add({
                           'text': messageText,
                           'sender': loggedInUser.email,
+                          'timeStamp': FieldValue.serverTimestamp(),
                         });
                         myKeyboardController.clear();
                       },
@@ -95,6 +97,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       _fireStore.collection('messages').add({
                         'text': messageText,
                         'sender': loggedInUser.email,
+                        'timeStamp': FieldValue.serverTimestamp(),
                       });
                       myKeyboardController.clear();
                     },
@@ -114,31 +117,33 @@ class _ChatScreenState extends State<ChatScreen> {
 }
 
 class MessageStream extends StatelessWidget {
-  const MessageStream({
-    Key? key,
-    required FirebaseFirestore fireStore,
-  })  : _fireStore = fireStore,
-        super(key: key);
-
-  final FirebaseFirestore _fireStore;
+  const MessageStream({Key? key, required this.currentUser}) : super(key: key);
+  final currentUser;
 
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: _fireStore.collection('messages').snapshots(),
+      stream: _fireStore
+          .collection("messages")
+          .orderBy('timeStamp', descending: false)
+          .snapshots(),
       builder: (context, AsyncSnapshot snapshot) {
         if (snapshot.hasData) {
-          final messages = snapshot.data.docs;
+          final messages = snapshot.data.docs.reversed;
           List<MessageBubbles> messageBubble = [];
           for (var message in messages) {
             final messageText = message['text'];
             final senderEmail = message['sender'];
             final bubble = MessageBubbles(
-                messageText: messageText, senderEmail: senderEmail);
+              messageText: messageText,
+              senderEmail: senderEmail,
+              isMe: currentUser == senderEmail,
+            );
             messageBubble.add(bubble);
           }
           return Expanded(
             child: ListView(
+              reverse: true,
               children: messageBubble,
             ),
           );
@@ -155,33 +160,48 @@ class MessageBubbles extends StatelessWidget {
   const MessageBubbles({
     Key? key,
     required this.messageText,
-    this.senderEmail,
+    required this.senderEmail,
+    required this.isMe,
   }) : super(key: key);
 
   final messageText;
   final senderEmail;
+  final bool isMe;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment:
+            isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
           Text(
             senderEmail,
             style: const TextStyle(color: Colors.grey, fontSize: 12),
           ),
           Material(
-            color: Colors.lightBlueAccent,
+            color: isMe
+                ? Color.fromARGB(255, 50, 185, 248)
+                : Color.fromARGB(255, 240, 234, 234),
             elevation: 5.0,
-            borderRadius: BorderRadius.circular(30.0),
+            borderRadius: isMe
+                ? const BorderRadius.only(
+                    topLeft: Radius.circular(30.0),
+                    bottomLeft: Radius.circular(30.0),
+                    bottomRight: Radius.circular(30.0),
+                  )
+                : const BorderRadius.only(
+                    topRight: Radius.circular(30.0),
+                    bottomLeft: Radius.circular(30.0),
+                    bottomRight: Radius.circular(30.0),
+                  ),
             child: Padding(
               child: Text(
                 '$messageText ',
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: isMe ? Colors.white : Colors.black87),
               ),
-              padding: const EdgeInsets.all(10.0),
+              padding: const EdgeInsets.all(15.0),
             ),
           ),
         ],
